@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JavaScript CRUD Example Tutorial</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <h1>
+      <center>JavaScript CRUD Example Tutorial</center>
+    </h1>
+    <hr />
+    <div class="employee-form">
+      <form
+        autocomplete="off"
+        id="form_input"
+        action="/api"
+        method="post"
+      >
+        <div>
+          <label>Full Name*</label
+          ><label class="validation-error hide" id="fullNameValidationError"
+            >This field is required.</label
+          >
+          <input type="text" name="fullName" id="fullName" value="hello" />
+        </div>
+        <div>
+          <label>Gender</label><br />
+          <input type="checkbox" name="gender" value="Male" /><span>male</span>
+          <input type="checkbox" name="gender" value="Female" /><span
+            >female</span
+          >
+        </div>
+        <div>
+          <label>Email</label>
+          <input type="text" name="email" id="email" />
+        </div>
+        <!-- <div>
+                <label>City</label>
+                <input type="text" name="city" id="city">
+            </div> -->
+        <div class="form-action-buttons">
+          <button class="btn1" id="btn2">Submit</button>
+        </div>
+      </form>
+    </div>
+    <br />
+    <div class="employees-table">
+      <table class="list" id="employeeList">
+        <thead>
+          <tr>
+            <th>Full Name</th>
+            <th>Gender</th>
+            <th>Email</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <!-- <tr>
+                            <td colspan="5" id="tbodyNo" style="text-align: center;">No Data</td>
+                        </tr>     -->
+        </tbody>
+      </table>
+    </div>
+    <!-- <script src="script.js"></script> -->
+  </body>
+  <script>
+    let jsoncard = document.getElementById("tbody");
+
+    fetch("http://localhost:8000/api")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        displayusers(data);
+        
+        // Use the data here (e.g., update the UI)
+      });
+
+
+    const form = document.getElementById('form_input')
+    document.getElementById("btn2").onclick = function (e) {
+      e.preventDefault();
+
+      const formdata = new FormData(form);
+      const data = Object.fromEntries(formdata);
+
+      
+      fetch("http://localhost:8000/api", {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          // console.log("hello");
+        })
+    };
+    
+    fetch("http://localhost:8000/api/67")
+    .then((response) => {
+      if(response.ok){
+        console.log('deleted done');
+      }else{
+        // throw new Error('no id')
+        console.log(response.status);
+      }
+    });
+
+    let displayusers = (users) => {
+      let htmltemplate = "";
+      for (let user of users) {
+        htmltemplate += `<tr>
+                           <td>${user.full_name}</td>
+                           <td>${user.gender}</td>
+                           <td>${user.email}</td>
+                           <td><a href="#">Edit</a><a href="/delete">Delete</a></td>
+                         </tr>`;
+      }
+      jsoncard.innerHTML = htmltemplate;
+    };
+  </script>
+</html>
