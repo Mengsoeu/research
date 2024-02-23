@@ -15,6 +15,7 @@ const get_info = (req, res) => {
   });
 };
 
+
 const create_info = (req, res) => {
   // console.log(req.body);
   const body = req.body;
@@ -25,26 +26,32 @@ const create_info = (req, res) => {
     if (err) {
       console.log(err);
     } else {
+      // res.json(body);
       res.json(body);
+      // res.redirect('/');
     }
   });
+  
 };
 
-// const del_info = () => {
+// const del_info = (req,res) => {
 //   console.log(req.params.id);
-//   // const sql = "delete from `user` where id =  ?";
-//   // con.query(sql,[req.params.id],(err,result) => {
+//   // const item_id = [req.params.id];
+//   // const sql = "delete from `user` where id = ?";
+//   // con.query(sql,item_id,(err,result) => {
 //   //   if(err){
 //   //     throw err;
 //   //   }else{
-//   //     res.redirect('/');
+//   //     res.send(result);
+      
 //   //   }
 //   // })
 // }
 
+
 module.exports = {
   create_info,
   get_info,
-  load,
+  load
   // del_info
 };

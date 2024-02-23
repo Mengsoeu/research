@@ -14,7 +14,7 @@
       <form
         autocomplete="off"
         id="form_input"
-        action="/api"
+        action="/api/create"
         method="post"
       >
         <div>
@@ -26,8 +26,8 @@
         </div>
         <div>
           <label>Gender</label><br />
-          <input type="checkbox" name="gender" value="Male" /><span>male</span>
-          <input type="checkbox" name="gender" value="Female" /><span
+          <input type="radio" name="gender" value="Male" /><span>male</span>
+          <input type="radio" name="gender" value="Female" /><span
             >female</span
           >
         </div>
@@ -65,9 +65,11 @@
     <!-- <script src="script.js"></script> -->
   </body>
   <script>
-    let jsoncard = document.getElementById("tbody");
 
-    fetch("http://localhost:8000/api")
+    // const fetch = require('node-fetch');
+
+    let jsoncard = document.getElementById("tbody");
+      fetch("http://localhost:8000/api")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -76,21 +78,21 @@
       })
       .then((data) => {
         displayusers(data);
-        
-        // Use the data here (e.g., update the UI)
+        // console.log(data);
       });
+    
 
-
-    const form = document.getElementById('form_input')
+    const form = document.getElementById("form_input");
+    
     document.getElementById("btn2").onclick = function (e) {
       e.preventDefault();
 
       const formdata = new FormData(form);
       const data = Object.fromEntries(formdata);
 
-      
-      fetch("http://localhost:8000/api", {
-        method: 'POST',
+      if(validateEmail(data.email)){
+        fetch("http://localhost:8000/api/create", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -101,23 +103,19 @@
             throw new Error("Network response was not ok");
           }
           return response.json();
+          // console.log(response.statusText);
         })
         .then((data) => {
-          console.log(data);
-          // console.log("hello");
-        })
-    };
-    
-    fetch("http://localhost:8000/api/67")
-    .then((response) => {
-      if(response.ok){
-        console.log('deleted done');
+          console.log('data received', data);
+          // displayusers(data);
+        });
       }else{
-        // throw new Error('no id')
-        console.log(response.status);
+        alert('PLease Enter your email with correct format')
       }
-    });
+    };
+     
 
+    //function display json to front-end
     let displayusers = (users) => {
       let htmltemplate = "";
       for (let user of users) {
@@ -125,10 +123,36 @@
                            <td>${user.full_name}</td>
                            <td>${user.gender}</td>
                            <td>${user.email}</td>
-                           <td><a href="#">Edit</a><a href="/delete">Delete</a></td>
+                           <td><a href="#">Edit</a><a href="/api/delete/${user.id}" id="del">Delete</a></td>
                          </tr>`;
       }
       jsoncard.innerHTML = htmltemplate;
     };
+    //delete api
+    // document.getElementById('del').onclick = function(){
+    //    const id = 164
+    //   // const btnid = item_id.id
+    //    fetch('http://localhost:8000/api/delete/${id}',{
+    //     method: 'DELETE',
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify()
+    //    })
+    //    .then((res) => {
+    //     if(!res.ok){
+    //       throw new Error('networking error')
+    //     }
+    //     return res.json()
+    //    })
+    //    .then(data => {
+    //     console.log('data delete froms sever', data);
+    //    })
+    // }
+    //validate function if email is end with @gmail.com
+    function validateEmail(email) {
+    const re =/^[^\s@]+@gmail\.com$/;
+    return re.test(email);
+}
   </script>
 </html>
